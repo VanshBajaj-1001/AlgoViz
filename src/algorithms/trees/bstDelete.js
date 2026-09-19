@@ -1,6 +1,6 @@
 function bstDelete(root, value) {
     const steps = []
-    function deleteNode(node, parent = null) {
+    function deleteNode(node, target) {
         if (!node) {
             steps.push({
                 type: "notFound"
@@ -11,11 +11,11 @@ function bstDelete(root, value) {
             type: "compare",
             node: node.id
         })
-        if (value < node.value) {
-            node.left = deleteNode(node.left, node)
+        if (target < node.value) {
+            node.left = deleteNode(node.left, target)
         }
-        else if (value > node.value) {
-            node.right = deleteNode(node.right, node)
+        else if (target > node.value) {
+            node.right = deleteNode(node.right, target)
         }
         else {
             steps.push({
@@ -36,7 +36,6 @@ function bstDelete(root, value) {
             }
             // Case 3: Two children
             let successor = node.right
-
             while (successor.left) {
                 successor = successor.left
             }
@@ -46,15 +45,15 @@ function bstDelete(root, value) {
                 replacement: successor.id
             })
             node.value = successor.value
-
+            // Delete the successor from the right subtree
             node.right = deleteNode(
                 node.right,
-                node
+                successor.value
             )
         }
         return node
     }
-    const newRoot = deleteNode(root)
+    const newRoot = deleteNode(root, value)
     return {
         root: newRoot,
         steps
